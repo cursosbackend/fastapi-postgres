@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  database:
+  db:
     image: postgres:14
     restart: always
     environment:
@@ -16,7 +16,7 @@ services:
   web:
     build: .
     depends_on:
-      - database
+      - db
     ports:
       - "8000:8000"
     environment:
@@ -24,5 +24,28 @@ services:
     env_file:
       - .env
 
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_container
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: jonhdoe@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: StrongPassword
+      PGADMIN_LISTEN_PORT: 8080
+      PGADMIN_CONFIG_PROXY_X_HOST_COUNT: 1
+      PGADMIN_CONFIG_PROXY_X_PREFIX_COUNT: 1
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    
+
+
 volumes:
   postgres_data:
+  pgadmin_data:
+
+
+
